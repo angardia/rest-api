@@ -8,8 +8,11 @@ const fs = require("fs");
 http.createServer((req, res) => {
     if (req.method === "POST" && req.url.includes("/user")) {
         const query = url.parse(req.url, true).query;
+
         //reading file
         readFile((users) => {
+            //my evil deeds ^^
+            if(users.findIndex(user => user.userName === query.username) === -1){
             //saving to array
             users.push({ "userName": query.username, "password": query.password });
             //saving file 
@@ -18,8 +21,15 @@ http.createServer((req, res) => {
                 res.write(` password is ${query.password}`);
                 res.end();
             });
-            console.log(users);
+            }
+            else{
+                res.write(`user ${query.username} already exist`)
+                res.end();
+            }
         });
+        
+
+
 
     } else if (req.method === "GET" && req.url.includes('/user')) {
         readFile((users) => {
